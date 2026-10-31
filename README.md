@@ -1,102 +1,87 @@
 # LoadLoop Backend
 
-A backend system for **LoadLoop**, a freight exchange platform designed to connect businesses seeking transportation services with transport providers offering available capacity.
+A backend for **LoadLoop**, a freight exchange platform that connects businesses needing transport with transport providers offering available capacity.
 
-This repository contains the server-side implementation responsible for handling API requests, business operations, and database communication.
-
-## Overview
-
-LoadLoop aims to simplify the connection between shipping businesses and transport providers through a shared freight exchange platform.
-
-The backend provides a RESTful API that communicates with backend services to process application requests and interact with the database.
+This repository contains the ASP.NET Core Web API that handles requests, applies business rules and talks to the database.
 
 ## Technology Stack
 
 - **Language:** C#
-- **Framework:** ASP.NET Core
-- **API Architecture:** REST
-- **Service Communication:** Windows Communication Foundation (WCF)
-- **Database:** Microsoft SQL Server
-- **Data Transfer:** Data Transfer Objects (DTOs)
+- **Framework:** ASP.NET Core Web API (minimal API endpoints)
+- **Data access:** Entity Framework Core (database-first)
+- **Database:** Microsoft SQL Server (LocalDB for development)
+- **Data transfer:** DTOs with validation attributes
 
 ## Architecture
-
-The application separates HTTP request handling from backend business operations.
 
 ```text
 Client / Frontend
        |
        v
-ASP.NET Core Web API
+Endpoints (Extensions/)
        |
        v
-WCF Service Client
+Services (business rules)
        |
        v
-LoadLoop Service
+EF Core DbContext
        |
        v
-Microsoft SQL Server
+SQL Server
 ```
 
-### Components
-
-- **ASP.NET Core API:** Exposes HTTP endpoints and handles incoming client requests.
-- **WCF Services:** Handle backend operations through service contracts.
-- **DTOs:** Define the data exchanged between application components.
-- **SQL Server:** Stores application data.
+- **Endpoints:** map HTTP routes, call services, return the right status codes.
+- **Services:** hold business rules (for example, only transport providers can own trucks).
+- **DTOs:** define what goes in and out of the API, so entities and password hashes never leave the server.
+- **EF Core:** maps tables to C# classes, scaffolded from the existing database.
 
 ## Current Functionality
 
-The backend currently includes operations for:
-
-- User management
-- Truck management
-- Retrieving individual records
-- Retrieving collections of records
-- Registering records
-- Deleting records
-
-Additional functionality may be introduced as the project evolves.
+- Users: register, list, get by id, update, delete
+- Trucks: in progress
 
 ## Getting Started
 
 ### Prerequisites
 
-- Visual Studio
-- .NET SDK compatible with the project
-- Microsoft SQL Server
-- SQL Server Management Studio (SSMS)
+- .NET SDK 10
+- Visual Studio (or any editor)
+- SQL Server or SQL Server LocalDB
 
 ### Setup
 
 1. Clone the repository:
-
    ```bash
    git clone https://github.com/programmingnoob53/LoadLoop-Backend.git
    ```
+2. Create the database by running `database/schema.sql` in SSMS or Visual Studio.
+3. Set the connection string in `appsettings.json` (or user secrets):
+   ```json
+   "ConnectionStrings": {
+     "DefaultConnection": "Server=(localdb)\\MSSQLLocalDB;Database=LoadLoop;Trusted_Connection=True;TrustServerCertificate=True;"
+   }
+   ```
+4. Run the API:
+   ```bash
+   dotnet run --project LoadLoop.Api
+   ```
+5. Open Swagger UI to try the endpoints.
 
-2. Open the solution file (`.sln`) in Visual Studio.
+## Roles
 
-3. Configure your SQL Server connection string using your local development configuration.
+- `A`: admin (created manually, never through public registration)
+- `T`: transport provider (can own trucks)
+- `U`: normal user (the default for registration)
 
-4. Ensure the WCF service is configured and accessible.
+## Security Notes
 
-5. Build the solution.
-
-6. Run the ASP.NET Core API project.
-
-7. Access the available API endpoints through Swagger (if enabled).
-
-## Configuration and Security
-
-Database credentials and other sensitive configuration values should be supplied through local configuration or environment variables.
+- Passwords are stored as hashes, never in plain text.
+- Authentication and authorization (JWT) are not implemented yet, so don't expose this API publicly.
+- Never commit database files or credentials.
 
 ## Project Status
 
-**Development:** Ongoing</text>
-
-This project is being developed and improved incrementally. Architecture, validation, error handling, and additional backend functionality may evolve over time.
+In development. Planned next: trucks, authentication, and tests.
 
 ## License
 
