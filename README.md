@@ -54,7 +54,7 @@ SQL Server
    ```bash
    git clone https://github.com/programmingnoob53/LoadLoop-Backend.git
    ```
-2. Create the database by running `database/schema.sql` in SSMS or Visual Studio.
+2. Create the database by running `LoadLoop.Api/Sql Scripts/Create Database.sql` in SSMS or Visual Studio.
 3. Set the connection string in `appsettings.json` (or user secrets):
    ```json
    "ConnectionStrings": {
