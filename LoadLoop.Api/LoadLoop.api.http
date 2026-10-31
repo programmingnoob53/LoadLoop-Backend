@@ -1,0 +1,31 @@
+@LoadLoop.api_HostAddress = http://localhost:5225
+
+GET {{LoadLoop.api_HostAddress}}/weatherforecast/
+Accept: application/json
+###
+POST {{LoadLoop.api_HostAddress}}/User
+Content-Type : application/json
+
+{
+    "userEmail" : "userEmail2@example.com",
+    "password" : "password123456",
+    "age" : 20,
+    "userRole" : "T"
+}
+
+###
+
+POST {{LoadLoop.api_HostAddress}}/Truck
+Content-Type: application/json
+
+{
+    "truck_image" : "https://www.bing.com/th/id/OIP.2DFIaz7Hv0Yla-mUjrYH5QHaEC?w=193&h=135&c=8&rs=1&qlt=90&o=6&dpr=1.3&pid=ImgAns&rm=2",
+    "isAvailable" : true,
+    "userEmail" : "userEmail2@example.com"
+}
+
+###
+GET {{LoadLoop.api_HostAddress}}/truck
+
+###
+GET {{LoadLoop.api_HostAddress}}/user
