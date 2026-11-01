@@ -20,7 +20,18 @@ namespace LoadLoop.api.Services
                 }).AsNoTracking().ToListAsync();
      
         }
-
+        public async Task<List<GetTruckDto>> GetTrucksByUserID(int id)
+        {
+            return await _dbContext
+                .Trucks.Where(t => t.UserId == id)
+                .Select(t => new GetTruckDto
+                {
+                    Id = t.UserId,
+                    ImageURL = t.TruckImage,
+                    LicensePlate = t.TruckLicensePlate,
+                    UserId = t.UserId
+                }).ToListAsync();
+        }
         public async Task<GetUserDto?> GetUserByIDAsync(int id)
         {
             return await _dbContext.UserTables

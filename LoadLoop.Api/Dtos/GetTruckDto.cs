@@ -8,6 +8,6 @@ namespace LoadLoop.api.Dtos
         public int Id { get; set; }
         public string ImageURL { get; set; } = string.Empty;
         public string? LicensePlate { get; set; } = string.Empty;
-        public string UserEmail { get; set; } = string.Empty; 
+        public int UserId { get; set; } 
     }
 }

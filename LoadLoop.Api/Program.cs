@@ -19,7 +19,7 @@ builder.Services.AddDbContext<LoadLoopDbContext>(options
 //add the services
 
 builder.Services.AddScoped<UserService>();
-
+builder.Services.AddScoped<TruckService>();
 var app = builder.Build();
 app.MapUsersEndpoint();
 app.MapTruckEndpoints();

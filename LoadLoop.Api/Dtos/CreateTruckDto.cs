@@ -10,6 +10,5 @@ namespace LoadLoop.api.Dtos
         public string LicensePlate { get; init; } = string.Empty;
         [Required, StringLength(50, ErrorMessage = "Email too long"), EmailAddress]
         public string UserEmail {  get; init; } = string.Empty;
-        
     }
 }
