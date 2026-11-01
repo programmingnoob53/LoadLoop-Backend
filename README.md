@@ -38,7 +38,7 @@ SQL Server
 ## Current Functionality
 
 - Users: register, list, get by id, update, delete
-- Trucks: in progress
+- Trucks: register, list, get by id, get by user id, update, delete, get list per user id
 
 ## Getting Started
 
