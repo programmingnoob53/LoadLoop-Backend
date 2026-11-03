@@ -11,7 +11,7 @@ namespace LoadLoop.api.Dtos
         public string UserEmail { get; init; } = string.Empty;
         [Required, MinLength(8, ErrorMessage = "Password must be atleast 8 characters")]
         public string Password { get; init; } = string.Empty;
-        [RegularExpression("^[UT]$", ErrorMessage = "Allowed roles: A: admin, U: user, T: transport provider")]
+        [RegularExpression("^[UT]$", ErrorMessage = "Allowed roles: U: user, T: transport provider")]//admin registered manually
         public char UserRole { get; init; }
         
     }
