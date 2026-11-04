@@ -75,10 +75,10 @@ namespace LoadLoop.api.Services
             }
             if (!string.IsNullOrWhiteSpace(updateUserDto.UserEmail)
                 && updateUserDto.UserEmail != user.UserEmail) {
-
+                    //check if there is a need to update the user email
                 if (await _dbContext.UserTables.AnyAsync(m => m.UserEmail == user.UserEmail))
                 {
-                    return OperationalResults.AlreadyExits;
+                    return OperationalResults.AlreadyExits;//already updated
                 }
                 user.UserEmail = updateUserDto.UserEmail;
             }

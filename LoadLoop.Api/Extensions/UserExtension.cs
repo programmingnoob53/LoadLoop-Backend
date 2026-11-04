@@ -11,7 +11,7 @@ namespace LoadLoop.api.Extensions
         private static string GetUserEndpoint = "GetUser";
         public static void MapUsersEndpoint(this WebApplication application)
         {
-            var group = application.MapGroup("/Users");
+            var group = application.MapGroup("/users");
             //GET
             group.MapGet("/", async (UserService service) =>
             {

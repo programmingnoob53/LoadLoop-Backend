@@ -10,7 +10,7 @@ namespace LoadLoop.api.Extensions
 
         public static void MapTruckEndpoints(this WebApplication application)
         {
-            var group = application.MapGroup("/Trucks");
+            var group = application.MapGroup("/trucks");
             //GET endpoints
             group.MapGet("/", async (TruckService truckService) => {
                 return Results.Ok(await truckService.GetTrucksAsync());
@@ -22,7 +22,7 @@ namespace LoadLoop.api.Extensions
                 return truck == null ? Results.NotFound() : Results.Ok(truck);
             }).WithName(GetTruckNameEndpoint);
 
-            group.MapGet("/Users/{userID:int}", async (TruckService truckService, int userID) =>
+            group.MapGet("/users/{userID:int}", async (TruckService truckService, int userID) =>
             {
                 var trucks = await truckService.GetTrucksByUserIDAsync(userID);
                 return trucks.Any() ? Results.Ok(trucks) : Results.NotFound();
@@ -39,7 +39,7 @@ namespace LoadLoop.api.Extensions
                 };
             });
 
-            group.MapDelete("/Users/{userID:int}", async(TruckService truckService, int userID) => {
+            group.MapDelete("/users/{userID:int}", async(TruckService truckService, int userID) => {
                 var deleteTruck = await truckService.deleteTrucksByUserAsync(userID);
 
                 return deleteTruck switch
