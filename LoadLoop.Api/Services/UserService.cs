@@ -59,33 +59,23 @@ namespace LoadLoop.api.Services
         }
 
         //PUT methods
-        public async Task<OperationalResults> UpdateUserAsync(int id, UpdateUserDto updateUserDto)
+        public async Task<OperationalResults> UpdateUserAsync(int id, UpdateUserDto dto)
         {
-
             var user = await _dbContext.UserTables.FindAsync(id);
+            if (user == null) return OperationalResults.NotFound;
 
-            if (user == null)
-            {
-                return OperationalResults.NotFound;
-            }
-            //USER exist
+            user.UserAge = dto.UserAge ?? user.UserAge;
+            user.UserName = dto.UserName ?? user.UserName;
 
-            user.UserAge = updateUserDto.UserAge ?? user.UserAge;
-            user.UserName = updateUserDto.UserName ?? user.UserName;
-            if (!string.IsNullOrWhiteSpace(updateUserDto.UserPassword))
+            if (!string.IsNullOrWhiteSpace(dto.UserPassword))
+                user.UserPasswordHash = HashAlgo.hashPassword(dto.UserPassword);
+
+            if (!string.IsNullOrWhiteSpace(dto.UserEmail) && dto.UserEmail != user.UserEmail)
             {
-                await _dbContext.SaveChangesAsync();
-                user.UserPasswordHash = HashAlgo.hashPassword(updateUserDto.UserPassword);
-            }
-            if (!string.IsNullOrWhiteSpace(updateUserDto.UserEmail)
-                && updateUserDto.UserEmail != user.UserEmail) {
-                    //check if there is a need to update the user email
-                if (await _dbContext.UserTables.AnyAsync(m => m.UserEmail == user.UserEmail))
-                {
-                    await _dbContext.SaveChangesAsync();
-                    return OperationalResults.AlreadyExits;//already updated
-                }
-                user.UserEmail = updateUserDto.UserEmail;
+                if (await _dbContext.UserTables.AnyAsync(m => m.UserEmail == dto.UserEmail))
+                    return OperationalResults.AlreadyExists;   // nothing saved yet
+
+                user.UserEmail = dto.UserEmail;
             }
 
             try
@@ -140,7 +130,7 @@ namespace LoadLoop.api.Services
             var user = await _dbContext.UserTables
                 .Where(m => m.UserEmail == userDto.UserEmail).FirstOrDefaultAsync();
             if (user != null)
-                return OperationalResults.AlreadyExits;//user already exists
+                return OperationalResults.AlreadyExists;//user already exists
 
             UserTable userEntity = new UserTable
             {

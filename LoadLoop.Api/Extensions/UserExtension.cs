@@ -31,7 +31,7 @@ namespace LoadLoop.api.Extensions
             group.MapPost("/", async (UserService service, CreateUserDto userDto) => {
                 var createUser = await service.registerUser(userDto);
                 
-                if(createUser == OperationalResults.AlreadyExits)
+                if(createUser == OperationalResults.AlreadyExists)
                 {
                     return Results.Conflict("Email already exists");
                 }else if(createUser == OperationalResults.Success)
@@ -72,7 +72,7 @@ namespace LoadLoop.api.Extensions
                 {
                     OperationalResults.Success => Results.NoContent(),
                     OperationalResults.NotFound => Results.NotFound(),
-                    OperationalResults.AlreadyExits => Results.Conflict("Email already in use."),
+                    OperationalResults.AlreadyExists => Results.Conflict("Email already in use."),
                     _ => Results.InternalServerError()
                 };
             });
