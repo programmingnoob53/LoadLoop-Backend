@@ -15,5 +15,7 @@ public partial class UserTable
 
     public string UserRole { get; set; } = null!;
 
+    public string UserName { get; set; } = null!;
+
     public virtual ICollection<Truck> Trucks { get; set; } = new List<Truck>();
 }

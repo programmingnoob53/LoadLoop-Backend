@@ -13,6 +13,8 @@ namespace LoadLoop.api.Dtos
         public string Password { get; init; } = string.Empty;
         [RegularExpression("^[UT]$", ErrorMessage = "Allowed roles: U: user, T: transport provider")]//admin registered manually
         public char UserRole { get; init; }
-        
+        [Required, StringLength(50, ErrorMessage = "The username must be at most 50 charecters")]
+        public string UserName { get; set; } = string.Empty;
+
     }
 }

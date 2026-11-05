@@ -50,9 +50,9 @@ namespace LoadLoop.api.Extensions
                 };
             });
             //PUT endpoints
-            group.MapPut("/", async (TruckService truckService, UpdateTruckDto truckDto) =>
+            group.MapPut("/{id:int}", async (TruckService truckService, UpdateTruckDto truckDto, int id) =>
             {
-                var updateUser = await truckService.UpdateTruckAsync(truckDto);
+                var updateUser = await truckService.UpdateTruckAsync(id, truckDto);
                 return updateUser switch
                 {
                     OperationalResults.Success => Results.NoContent(),

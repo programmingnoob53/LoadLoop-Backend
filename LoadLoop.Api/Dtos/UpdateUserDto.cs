@@ -5,8 +5,6 @@ namespace LoadLoop.api.Dtos
 {
     public class UpdateUserDto
     {
-        [Required]
-        public int Id { get; init; }
 
         [EmailAddress, StringLength(50, ErrorMessage = "Email too long")]
         public string? UserEmail { get; init; } = string.Empty;
@@ -16,6 +14,8 @@ namespace LoadLoop.api.Dtos
 
         [Range(18, 55, ErrorMessage = "Age must be between 18 and 55")]
         public int? UserAge { get; init;  }
+        [StringLength(50)]
+        public string UserName { get; set; } = string.Empty;
 
     }
 }

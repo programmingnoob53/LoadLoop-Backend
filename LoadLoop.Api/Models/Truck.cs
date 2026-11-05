@@ -13,5 +13,9 @@ public partial class Truck
 
     public int UserId { get; set; }
 
+    public string OwnerRole { get; set; } = null!;
+
+    public int TruckCapacity { get; set; }
+
     public virtual UserTable User { get; set; } = null!;
 }

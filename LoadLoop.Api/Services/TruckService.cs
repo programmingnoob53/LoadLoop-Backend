@@ -19,7 +19,8 @@ namespace LoadLoop.api.Services
                 Id = m.TruckId,
                 ImageURL = m.TruckImage,
                 LicensePlate = m.TruckLicensePlate,
-                UserId = m.UserId
+                UserId = m.UserId,
+                TruckCapacity = m.TruckCapacity,
             }).ToListAsync();
         }
 
@@ -32,7 +33,8 @@ namespace LoadLoop.api.Services
                     Id = t.UserId,
                     ImageURL = t.TruckImage,
                     LicensePlate = t.TruckLicensePlate,
-                    UserId= t.UserId
+                    UserId= t.UserId,
+                    TruckCapacity = t.TruckCapacity
                 }).ToListAsync();
         }
         public async Task<GetTruckDto?> GetTruckByIDAsync(int id)
@@ -44,7 +46,9 @@ namespace LoadLoop.api.Services
                     Id = t.TruckId,
                     ImageURL = t.TruckImage,
                     LicensePlate = t.TruckLicensePlate,
-                    UserId = t.UserId
+                    UserId = t.UserId,
+                    TruckCapacity = t.TruckCapacity
+                   
                 })
                 .FirstOrDefaultAsync();
         }
@@ -71,6 +75,7 @@ namespace LoadLoop.api.Services
             {
                 TruckImage = truckDto.TruckImage,
                 TruckLicensePlate = truckDto.LicensePlate,
+                TruckCapacity = truckDto.TruckCapacity,
                 UserId = user.UserId//link the user
             };
 
@@ -88,14 +93,15 @@ namespace LoadLoop.api.Services
         }
 
         //PUT
-        public async Task<OperationalResults> UpdateTruckAsync(UpdateTruckDto truckDto)
+        public async Task<OperationalResults> UpdateTruckAsync(int id, UpdateTruckDto truckDto)
         {
             var truck = await _dbContext
-                .Trucks.FindAsync(truckDto.Id);
+                .Trucks.FindAsync(id);
             if(truck == null) return OperationalResults.NotFound;
 
             truck.TruckLicensePlate = truckDto.LicensePlate ?? truck.TruckLicensePlate;
             truck.TruckImage = truckDto.ImageURL ?? truck.TruckImage;
+            truck.TruckCapacity = truckDto.TruckCapacity == 0 ? truck.TruckCapacity : truckDto.TruckCapacity;
 
             try
             {

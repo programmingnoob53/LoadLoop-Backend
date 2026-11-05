@@ -26,11 +26,18 @@ public partial class LoadLoopDbContext : DbContext
     {
         modelBuilder.Entity<Truck>(entity =>
         {
-            entity.HasKey(e => e.TruckId).HasName("PK__TRUCK__6693F6337C29A10C");
+            entity.HasKey(e => e.TruckId).HasName("PK__TRUCK__6693F6336554B9A6");
 
             entity.ToTable("TRUCK");
 
             entity.Property(e => e.TruckId).HasColumnName("TRUCK_ID");
+            entity.Property(e => e.OwnerRole)
+                .HasMaxLength(1)
+                .IsUnicode(false)
+                .HasDefaultValue("T")
+                .IsFixedLength()
+                .HasColumnName("OWNER_ROLE");
+            entity.Property(e => e.TruckCapacity).HasColumnName("TRUCK_CAPACITY");
             entity.Property(e => e.TruckImage)
                 .IsUnicode(false)
                 .HasColumnName("TRUCK_IMAGE");
@@ -43,18 +50,18 @@ public partial class LoadLoopDbContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.Trucks)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__TRUCK__USER_ID__14270015");
+                .HasConstraintName("FK__TRUCK__USER_ID__540C7B00");
         });
 
         modelBuilder.Entity<UserTable>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__USER_TAB__F3BEEBFF2339A1A1");
+            entity.HasKey(e => e.UserId).HasName("PK__USER_TAB__F3BEEBFFE4517502");
 
             entity.ToTable("USER_TABLE");
 
             entity.HasIndex(e => new { e.UserEmail, e.UserRole }, "UQ_USER_EMAIL_ROLE").IsUnique();
 
-            entity.HasIndex(e => e.UserEmail, "UQ__USER_TAB__43CA31682C25787F").IsUnique();
+            entity.HasIndex(e => e.UserEmail, "UQ__USER_TAB__43CA3168221749CA").IsUnique();
 
             entity.Property(e => e.UserId).HasColumnName("USER_ID");
             entity.Property(e => e.UserAge).HasColumnName("USER_AGE");
@@ -62,6 +69,11 @@ public partial class LoadLoopDbContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("USER_EMAIL");
+            entity.Property(e => e.UserName)
+                .HasMaxLength(500)
+                .IsUnicode(false)
+                .HasDefaultValue("None")
+                .HasColumnName("USER_NAME");
             entity.Property(e => e.UserPasswordHash)
                 .IsUnicode(false)
                 .HasColumnName("USER_PASSWORD_HASH");

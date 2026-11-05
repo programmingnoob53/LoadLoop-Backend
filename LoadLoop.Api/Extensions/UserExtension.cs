@@ -65,8 +65,8 @@ namespace LoadLoop.api.Extensions
             });
 
             //PUT
-            group.MapPut("/", async (UserService service, UpdateUserDto userDto) => {
-                var updateUser = await service.UpdateUserAsync(userDto);
+            group.MapPut("/{id:int}", async (UserService service, UpdateUserDto userDto, int id) => {
+                var updateUser = await service.UpdateUserAsync(id, userDto);
 
                 return updateUser switch
                 {

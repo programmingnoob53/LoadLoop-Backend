@@ -16,7 +16,7 @@ namespace LoadLoop.api.Services
             //asNoTracking => this is a readonly query
             return 
                 await _dbContext.UserTables.Select(m => new GetUserDto {
-                Id = m.UserId, age = m.UserAge, Email =  m.UserEmail,UserRole = m.UserRole
+                Id = m.UserId, age = m.UserAge, Email =  m.UserEmail,UserRole = m.UserRole, UserName = m.UserName,
                 }).AsNoTracking().ToListAsync();
      
         }
@@ -29,7 +29,8 @@ namespace LoadLoop.api.Services
                     Id = t.UserId,
                     ImageURL = t.TruckImage,
                     LicensePlate = t.TruckLicensePlate,
-                    UserId = t.UserId
+                    UserId = t.UserId,
+                    TruckCapacity = t.TruckCapacity,
                 }).ToListAsync();
         }
         public async Task<GetUserDto?> GetUserByIDAsync(int id)
@@ -43,7 +44,8 @@ namespace LoadLoop.api.Services
                 Id = m.UserId,
                 age = m.UserAge,
                 Email = m.UserEmail,
-                UserRole = m.UserRole
+                UserRole = m.UserRole,
+                UserName = m.UserName,
             }).FirstOrDefaultAsync();
         }
 
@@ -52,15 +54,15 @@ namespace LoadLoop.api.Services
             return await _dbContext.UserTables
                 .AsNoTracking()
                 .Where(m => m.UserEmail.Equals(email))
-                .Select(m => new GetUserDto {Id = m.UserId, age = m.UserAge, Email = m.UserEmail,UserRole = m.UserRole })
+                .Select(m => new GetUserDto {Id = m.UserId, UserName = m.UserName, age = m.UserAge, Email = m.UserEmail,UserRole = m.UserRole })
                 .FirstOrDefaultAsync();
         }
 
         //PUT methods
-        public async Task<OperationalResults> UpdateUserAsync(UpdateUserDto updateUserDto)
+        public async Task<OperationalResults> UpdateUserAsync(int id, UpdateUserDto updateUserDto)
         {
 
-            var user = await _dbContext.UserTables.FindAsync(updateUserDto.Id);
+            var user = await _dbContext.UserTables.FindAsync(id);
 
             if (user == null)
             {
@@ -69,8 +71,10 @@ namespace LoadLoop.api.Services
             //USER exist
 
             user.UserAge = updateUserDto.UserAge ?? user.UserAge;
+            user.UserName = updateUserDto.UserName ?? user.UserName;
             if (!string.IsNullOrWhiteSpace(updateUserDto.UserPassword))
             {
+                await _dbContext.SaveChangesAsync();
                 user.UserPasswordHash = HashAlgo.hashPassword(updateUserDto.UserPassword);
             }
             if (!string.IsNullOrWhiteSpace(updateUserDto.UserEmail)
@@ -78,6 +82,7 @@ namespace LoadLoop.api.Services
                     //check if there is a need to update the user email
                 if (await _dbContext.UserTables.AnyAsync(m => m.UserEmail == user.UserEmail))
                 {
+                    await _dbContext.SaveChangesAsync();
                     return OperationalResults.AlreadyExits;//already updated
                 }
                 user.UserEmail = updateUserDto.UserEmail;
@@ -142,6 +147,7 @@ namespace LoadLoop.api.Services
                 UserEmail = userDto.UserEmail,
                 UserAge = userDto.UserAge,
                 UserRole = userDto.UserRole.ToString(),
+                UserName = userDto.UserName,
                 UserPasswordHash = HashAlgo.hashPassword(userDto.Password)
             };
 
