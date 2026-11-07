@@ -87,10 +87,10 @@ SQL Server
    Wait about 15 seconds, then check that `docker ps` shows `Up`.
 4. Create the database from the schema script:
    ```bash
-   docker cp database/schema.sql sql:/tmp/schema.sql
-   docker exec -it sql /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P '<Password>' -C -i /tmp/schema.sql
+   docker cp Database/scheme.sql sql:/tmp/scheme.sql
+   docker exec -it sql /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P '<Password>' -C -i /tmp/scheme.sql
    ```
-5. Set the connection string as a user secret (never commit it):
+5. Set the connection string as a user secret:
    ```bash
    cd LoadLoop.Api
    dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost,1433;Database=LoadLoop;User Id=sa;Password=<Password>;TrustServerCertificate=True;"
