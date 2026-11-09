@@ -1,4 +1,6 @@
-﻿USE LoadLoop;
+CREATE DATABASE LoadLoop;
+
+USE LoadLoop;
 GO
 
 CREATE TABLE USER_TABLE(
