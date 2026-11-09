@@ -87,8 +87,8 @@ SQL Server
    Wait about 15 seconds, then check that `docker ps` shows `Up`.
 4. Create the database from the schema script:
    ```bash
-   docker cp Database/scheme.sql sql:/tmp/scheme.sql
-   docker exec -it sql /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P '<Password>' -C -i /tmp/scheme.sql
+   docker cp Database/scheme.sql sql:/tmp/schema.sql
+   docker exec -it sql /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P '<Password>' -C -i /tmp/schema.sql
    ```
 5. Set the connection string as a user secret:
    ```bash
