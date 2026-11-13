@@ -1,5 +1,7 @@
+IF DB_ID('LoadLoop') IS NULL BEGIN
 CREATE DATABASE LoadLoop;
-GO
+END
+
 USE LoadLoop;
 GO
 
