@@ -1,3 +1,4 @@
+using LoadLoop.api.Data;
 using LoadLoop.api.Extensions;
 using LoadLoop.api.Models;
 using LoadLoop.api.Services;
@@ -14,7 +15,7 @@ builder.Services.AddOpenApi();
 //add validation
 builder.Services.AddValidation();
 //add the database
-builder.Services.AddDbContext<LoadLoopDbContext>(options
+builder.Services.AddDbContext<LoadLoopContext>(options
     => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 //add the services
 
