@@ -6,31 +6,59 @@ namespace LoadLoop.api.Extensions
 {
     public static class TruckExtension
     {
-        private static string GetTruckNameEndpoint = "GetTruck";
-
-        public static void MapTruckEndpoints(this WebApplication application)
+        private static string GetTruckEndpointName = "GetTruckEndpoint";
+       public static void MapTruckEndPoints(this WebApplication app)
         {
-            var group = application.MapGroup("/trucks");
-            //GET endpoints
-            group.MapGet("/", async (TruckService truckService) => {
+            
+            var group = app.MapGroup("/trucks");
+            //GET
+            group.MapGet("/", async(TruckService truckService) =>
+            {
                 return Results.Ok(await truckService.GetTrucksAsync());
+            }).WithName(GetTruckEndpointName);
+
+            group.MapGet("/user/{userId:int}", async(TruckService truckService, int userId) =>
+            {
+                var trucks = await truckService.GetTrucksByUserIDAsync(userId);
+                return Results.Ok(trucks);
             });
 
-            group.MapGet("/{truckID:int}", async (TruckService truckService, int truckID) =>
+            group.MapGet("/{id:int}", async(TruckService truckService, int id) =>
             {
-                var truck = await truckService.GetTruckByIDAsync(truckID);
+                var truck = await truckService.GetTruckByIDAsync(id);
                 return truck == null ? Results.NotFound() : Results.Ok(truck);
-            }).WithName(GetTruckNameEndpoint);
-
-            group.MapGet("/users/{userID:int}", async (TruckService truckService, int userID) =>
-            {
-                var trucks = await truckService.GetTrucksByUserIDAsync(userID);
-                return trucks.Any() ? Results.Ok(trucks) : Results.NotFound();
             });
-            //DELETE endpoints
-            group.MapDelete("/{truckID:int}", async (TruckService truckService, int truckID) =>
+            //POST
+            group.MapPost("/", async(TruckService truckService, CreateTruckDto truckDto) =>
             {
-                var deleteTruck = await truckService.deleteTruckByIDAsysnc(truckID);
+                OperationalResults result = await truckService.CreateTruckAsync(truckDto);
+                return result switch
+                {
+                    OperationalResults.NotFound => Results.NotFound(),
+                    OperationalResults.InvalidRole => Results.Problem("Invalid role for the user"),//user was found but invalid role
+                    OperationalResults.Success => Results.NoContent(),
+                    _ => Results.InternalServerError() 
+                };
+            });
+            //PUT
+
+            group.MapPut("/{id:int}", async(TruckService truckService,int id,  UpdateTruckDto truckDto) =>
+            {
+                OperationalResults updateTruck = await truckService.UpdateTruckAsyc(id, truckDto);
+                return updateTruck switch
+                {
+                    OperationalResults.NotFound => Results.NotFound(),
+                    OperationalResults.Failure => Results.InternalServerError(),
+                    _ => Results.NoContent() //the last success case
+                };
+            });
+
+            //DELETE
+
+            group.MapDelete("/{id:int}", async(TruckService truckService, int id) =>
+            {
+                OperationalResults deleteTruck = await truckService.DeleteTruckAsync(id);
+
                 return deleteTruck switch
                 {
                     OperationalResults.Success => Results.NoContent(),
@@ -39,39 +67,18 @@ namespace LoadLoop.api.Extensions
                 };
             });
 
-            group.MapDelete("/users/{userID:int}", async(TruckService truckService, int userID) => {
-                var deleteTruck = await truckService.deleteTrucksByUserAsync(userID);
+            group.MapDelete("/users/{id:int}", async(TruckService truckService, int userid) =>
+            {
+                OperationalResults deleteTruck = await truckService.DeleteTrucksByUserIDAsync(userid);
 
                 return deleteTruck switch
                 {
                     OperationalResults.Success => Results.NoContent(),
                     OperationalResults.NotFound => Results.NotFound(),
                     _ => Results.InternalServerError()
-                };
-            });
-            //PUT endpoints
-            group.MapPut("/{id:int}", async (TruckService truckService, UpdateTruckDto truckDto, int id) =>
-            {
-                var updateUser = await truckService.UpdateTruckAsync(id, truckDto);
-                return updateUser switch
-                {
-                    OperationalResults.Success => Results.NoContent(),
-                    OperationalResults.NotFound => Results.NotFound(),
-                    _ => Results.InternalServerError()
-                };
-            });
-            group.MapPost("/", async (TruckService truckService, CreateTruckDto truckDto) =>
-            {
-                var createdTruck = await truckService.CreateTruckAsync(truckDto);
-                return createdTruck switch
-                {
-                    OperationalResults.NotFound => Results.NotFound(),
-                    OperationalResults.InvalidRole => Results.Problem("Invalid role"),
-                    OperationalResults.Failiure => Results.InternalServerError(),
-                    OperationalResults.Success => Results.Created(),
-                    _ => Results.InternalServerError()//other case
                 };
             });
         }
+    
     }
 }

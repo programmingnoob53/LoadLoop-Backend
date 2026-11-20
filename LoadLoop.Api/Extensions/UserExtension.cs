@@ -1,6 +1,4 @@
-﻿
-
-using LoadLoop.api.Dtos;
+﻿using LoadLoop.api.Dtos;
 using LoadLoop.api.Helper;
 using LoadLoop.api.Services;
 
@@ -8,76 +6,79 @@ namespace LoadLoop.api.Extensions
 {
     public static class UserExtension
     {
-        private static string GetUserEndpoint = "GetUser";
-        public static void MapUsersEndpoint(this WebApplication application)
+        private static string GetUserEndpointName = "GetUserEndpoint";
+        public static void MapUserEndpoints(this WebApplication app)
         {
-            var group = application.MapGroup("/users");
-            //GET
-            group.MapGet("/", async (UserService service) =>
+            var group = app.MapGroup("/users");
+            group.MapGet("/", async(UserService userService) =>
             {
-                return Results.Ok( await service.GetUsersAsync());
+                return Results.Ok(await userService.GetUsersAsync());
             });
-
-            group.MapGet("/{id:int}", async (UserService service, int id) => { 
-                var user = await service.GetUserByIDAsync(id);
-                return user is null ? Results.NotFound(user) : Results.Ok(user);
-            }).WithName(GetUserEndpoint);
-
-            group.MapGet("/{email}", async (UserService service, string email) => {
-                var user = await service.GetUserByEmailAsync(email);
-                return user is null ? Results.NotFound() : Results.Ok(user);
+            group.MapGet("/{email}", async(UserService userService, string email) =>
+            {
+                var user = await userService.GetUserByEmail(email);
+                return user switch
+                {
+                    null => Results.NotFound(),
+                    _ => Results.Ok(user)
+                };
+            });
+            group.MapGet("/{id:int}", async(UserService userService, int id) =>
+            {
+                var user = await userService.GetUserByIDAsync(id);
+                return user switch
+                {
+                    null => Results.NotFound(),
+                    _ => Results.Ok(user)
+                };
             });
             //POST
-            group.MapPost("/", async (UserService service, CreateUserDto userDto) => {
-                var createUser = await service.registerUser(userDto);
-                
-                if(createUser == OperationalResults.AlreadyExists)
-                {
-                    return Results.Conflict("Email already exists");
-                }else if(createUser == OperationalResults.Success)
-                {
-                    return Results.Created();
-                }
-                return Results.InternalServerError();
-          
-            });
-            //DELETE
-            group.MapDelete("/{id:int}", async (UserService service, int id) =>
+            group.MapPost("/", async(UserService userService, CreateUserDto userDto) =>
             {
-                var deleted = await service.deleteUserByIDAsync(id);
-                return deleted switch
+                OperationalResults postResult = await userService.CreateUserAsync(userDto);
+                return postResult switch
                 {
-                    OperationalResults.Success => Results.NoContent(),
-                    OperationalResults.NotFound => Results.NotFound(),
-                    _=> Results.InternalServerError()//For the operation.failiure
+                    OperationalResults.Success => Results.Created(),
+                    OperationalResults.InvalidOperation => Results.Problem("Cannot perform such an operation"),
+                    _ => Results.InternalServerError()
                 };
-
-            });
-
-            group.MapDelete("/", async (UserService service, string email) => { 
-                var deleted = await service.deleteUserByEmailAsync(email);
-                return deleted switch
+            }).WithName(GetUserEndpointName);
+            //DELETE
+            group.MapDelete("/{id:int}", async(UserService userService, int id) =>
+            {
+                OperationalResults deleteResult = await userService.DeleteUserByID(id);
+                return deleteResult switch
                 {
-                    OperationalResults.Success => Results.NoContent(),
                     OperationalResults.NotFound => Results.NotFound(),
-                    _ => Results.InternalServerError()//For the operation.failiure
-                };
-            });
-
-            //PUT
-            group.MapPut("/{id:int}", async (UserService service, UpdateUserDto userDto, int id) => {
-                var updateUser = await service.UpdateUserAsync(id, userDto);
-
-                return updateUser switch
-                {
                     OperationalResults.Success => Results.NoContent(),
-                    OperationalResults.NotFound => Results.NotFound(),
-                    OperationalResults.AlreadyExists => Results.Conflict("Email already in use."),
+                    OperationalResults.InvalidOperation => Results.Problem("Cannot perform such an action"),
                     _ => Results.InternalServerError()
                 };
             });
 
+            group.MapDelete("/{email}", async(UserService userService, string email) =>
+            {
+                OperationalResults deleteResult = await userService.DeleteUserByEmail(email);
+                return deleteResult switch
+                {
+                    OperationalResults.NotFound => Results.NotFound(),
+                    OperationalResults.Success => Results.NoContent(),
+                    OperationalResults.InvalidOperation => Results.Problem("Cannot perform such an action"),
+                    _ => Results.InternalServerError()
+                };
+            });
 
+            group.MapPut("/{id:int}", async(UserService userService, int id, UpdateUserDto userDto) =>
+            {
+                OperationalResults putResult = await userService.UpdateUserAsync(id, userDto);
+                return putResult switch
+                {
+                    OperationalResults.Success => Results.NoContent(),
+                    OperationalResults.Failure => Results.InternalServerError(),
+                    OperationalResults.InvalidOperation => Results.Problem("Invalid operation cannot be performed."),
+                    _ => Results.NotFound()
+                };
+            });
         }
     }
 }

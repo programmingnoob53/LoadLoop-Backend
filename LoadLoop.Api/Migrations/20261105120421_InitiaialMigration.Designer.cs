@@ -5,12 +5,13 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using LoadLoop.api.Data;
 
 #nullable disable
 
 namespace LoadLoop.api.Migrations
 {
-    [DbContext(typeof(LoadLoopDbContext))]
+    [DbContext(typeof(LoadLoopContext))]
     [Migration("20261105120421_InitiaialMigration")]
     partial class InitiaialMigration
     {

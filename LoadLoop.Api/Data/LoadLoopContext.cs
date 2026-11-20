@@ -24,7 +24,7 @@ public partial class LoadLoopContext : DbContext
     {
         modelBuilder.Entity<AdminTable>(entity =>
         {
-            entity.HasKey(e => e.AdId).HasName("PK__ADMIN_TA__B5B611FBFDC74F4F");
+            entity.HasKey(e => e.AdId).HasName("PK__ADMIN_TA__B5B611FB47FAA4F3");
 
             entity.ToTable("ADMIN_TABLE");
 
@@ -37,12 +37,12 @@ public partial class LoadLoopContext : DbContext
             entity.HasOne(d => d.Us).WithMany(p => p.AdminTables)
                 .HasForeignKey(d => d.UsId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__ADMIN_TAB__US_ID__0A9D95DB");
+                .HasConstraintName("FK__ADMIN_TAB__US_ID__3587F3E0");
         });
 
         modelBuilder.Entity<DriverTable>(entity =>
         {
-            entity.HasKey(e => e.DriId).HasName("PK__DRIVER_T__8AE39018AA176895");
+            entity.HasKey(e => e.DriId).HasName("PK__DRIVER_T__8AE39018DDA4B67E");
 
             entity.ToTable("DRIVER_TABLE");
 
@@ -56,19 +56,23 @@ public partial class LoadLoopContext : DbContext
             entity.HasOne(d => d.Us).WithMany(p => p.DriverTables)
                 .HasForeignKey(d => d.UsId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__DRIVER_TA__US_ID__14270015");
+                .HasConstraintName("FK__DRIVER_TA__US_ID__31B762FC");
         });
 
         modelBuilder.Entity<TruckTable>(entity =>
         {
-            entity.HasKey(e => e.TruId).HasName("PK__TRUCK_TA__EEB2B7302802CFE2");
+            entity.HasKey(e => e.TruId).HasName("PK__TRUCK_TA__EEB2B73024A574ED");
 
             entity.ToTable("TRUCK_TABLE");
 
-            entity.HasIndex(e => e.TruLicensePlate, "UQ__TRUCK_TA__54085E28F637A9F8").IsUnique();
+            entity.HasIndex(e => e.TruLicensePlate, "UQ__TRUCK_TA__54085E288DB57489").IsUnique();
 
             entity.Property(e => e.TruId).HasColumnName("TRU_ID");
             entity.Property(e => e.DriId).HasColumnName("DRI_ID");
+            entity.Property(e => e.TruImage)
+                .HasMaxLength(500)
+                .IsUnicode(false)
+                .HasColumnName("TRU_IMAGE");
             entity.Property(e => e.TruLicensePlate)
                 .HasMaxLength(7)
                 .IsUnicode(false)
@@ -83,20 +87,20 @@ public partial class LoadLoopContext : DbContext
             entity.HasOne(d => d.Dri).WithMany(p => p.TruckTables)
                 .HasForeignKey(d => d.DriId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__TRUCK_TAB__DRI_I__18EBB532");
+                .HasConstraintName("FK__TRUCK_TAB__DRI_I__3A4CA8FD");
         });
 
         modelBuilder.Entity<UserTable>(entity =>
         {
-            entity.HasKey(e => e.UsId).HasName("PK__USER_TAB__DE473D810A654206");
+            entity.HasKey(e => e.UsId).HasName("PK__USER_TAB__DE473D818F8C65FA");
 
             entity.ToTable("USER_TABLE");
 
-            entity.HasIndex(e => e.UsEmail, "UQ__USER_TAB__BA0A38669EAE938F").IsUnique();
+            entity.HasIndex(e => e.UsEmail, "UQ__USER_TAB__BA0A3866A4E3C0A0").IsUnique();
 
-            entity.HasIndex(e => new { e.UsIdNumber, e.UsName }, "UQ__USER_TAB__D225519775E791D4").IsUnique();
+            entity.HasIndex(e => new { e.UsIdNumber, e.UsName }, "UQ__USER_TAB__D2255197F0687426").IsUnique();
 
-            entity.HasIndex(e => e.UsPhone, "UQ__USER_TAB__EECBD7444A4B3773").IsUnique();
+            entity.HasIndex(e => e.UsPhone, "UQ__USER_TAB__EECBD74424EBCD5C").IsUnique();
 
             entity.Property(e => e.UsId).HasColumnName("US_ID");
             entity.Property(e => e.UsEmail)
@@ -112,6 +116,9 @@ public partial class LoadLoopContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("US_NAME");
+            entity.Property(e => e.UsPasswordHash)
+                .IsUnicode(false)
+                .HasColumnName("US_PASSWORD_HASH");
             entity.Property(e => e.UsPhone)
                 .HasMaxLength(10)
                 .IsUnicode(false)

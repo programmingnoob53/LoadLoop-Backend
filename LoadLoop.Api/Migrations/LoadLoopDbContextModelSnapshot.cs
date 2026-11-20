@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-
+using LoadLoop.api.Data;
 #nullable disable
 
 namespace LoadLoop.api.Migrations
 {
-    [DbContext(typeof(LoadLoopDbContext))]
+    [DbContext(typeof(LoadLoopContext))]
     partial class LoadLoopDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

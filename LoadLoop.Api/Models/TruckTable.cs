@@ -15,5 +15,7 @@ public partial class TruckTable
 
     public string TruLicensePlate { get; set; } = null!;
 
+    public string TruImage { get; set; } = null!;
+
     public virtual DriverTable Dri { get; set; } = null!;
 }

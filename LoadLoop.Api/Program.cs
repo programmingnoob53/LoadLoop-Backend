@@ -1,9 +1,7 @@
 using LoadLoop.api.Data;
 using LoadLoop.api.Extensions;
-using LoadLoop.api.Models;
 using LoadLoop.api.Services;
 using Microsoft.EntityFrameworkCore;
-using System.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,10 +19,11 @@ builder.Services.AddDbContext<LoadLoopContext>(options
 
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<TruckService>();
+builder.Services.AddScoped<DriverService>();
 var app = builder.Build();
-app.MapUsersEndpoint();
-app.MapTruckEndpoints();
-
+app.MapTruckEndPoints();
+app.MapUserEndpoints();
+app.MapDriverEndpoints();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

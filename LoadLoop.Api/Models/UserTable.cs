@@ -16,8 +16,10 @@ public partial class UserTable
     public string UsSurname { get; set; } = null!;
 
     public string UsPhone { get; set; } = null!;
-    public string UsPasswordHash{get;set;} = null!;
+
     public string? UsRole { get; set; }
+
+    public string UsPasswordHash { get; set; } = null!;
 
     public virtual ICollection<AdminTable> AdminTables { get; set; } = new List<AdminTable>();
 
