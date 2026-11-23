@@ -79,6 +79,16 @@ namespace LoadLoop.api.Extensions
                     _ => Results.NotFound()
                 };
             });
+            //PATCH
+            group.MapPatch("/{id:int}", async (UserService userService, int id, PatchUserDto userDto) => {
+                var patchResult = await userService.PatchUser(userDto, id);
+                return patchResult switch
+                {
+                    OperationalResults.Success => Results.NoContent(),
+                    OperationalResults.NotFound => Results.NotFound(),
+                    _ => Results.InternalServerError()
+                };
+            });
         }
     }
 }

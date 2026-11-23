@@ -5,7 +5,7 @@ namespace LoadLoop.api.Dtos
 {
     //a user cannot change their role
     //a user cannot change their id number
-    public class UpdateUserDto
+    public record UpdateUserDto
     {
         [Required, StringLength(50, ErrorMessage = "The useremail must be atmost 50 charecters."), EmailAddress]
         public string userEmail{get; init;} = string.Empty;

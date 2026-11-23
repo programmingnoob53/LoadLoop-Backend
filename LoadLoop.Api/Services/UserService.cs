@@ -150,5 +150,31 @@ namespace LoadLoop.api.Services
                 return OperationalResults.Failure;
             }
         }
+        //PATCH
+
+        public async Task<OperationalResults> PatchUser(PatchUserDto userDto, int userId)
+        {
+            try
+            {
+                var user = await _dbContext.UserTables.FindAsync(userId);
+                if (user is null) return OperationalResults.NotFound;
+                //update the user
+                user.UsEmail = userDto.newUserEmail?? user.UsEmail;
+                user.UsName = userDto.newUserName ?? user.UsName;
+                user.UsPhone = userDto.newPhoneNumber ?? user.UsPhone;
+                user.UsSurname = userDto.newUserSurname ?? user.UsSurname;
+                if(userDto.newPassword != null)
+                {
+                    user.UsPasswordHash = HashAlgo.hashPassword(userDto.newPassword);
+                }
+
+                await _dbContext.SaveChangesAsync();
+                return OperationalResults.Success;
+            }
+            catch (DbUpdateException)
+            {
+                return OperationalResults.Failure;
+            }
+        }
     }
 }
