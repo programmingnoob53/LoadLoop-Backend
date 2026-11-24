@@ -3,6 +3,7 @@ using LoadLoop.api.Helper;
 using LoadLoop.api.Models;
 using LoadLoop.api.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi;
 
 namespace LoadLoop.api.Services
 {
@@ -23,7 +24,7 @@ namespace LoadLoop.api.Services
                 truckMaxweight = m.TruMaxWeight,
                 truckLicensePlate = m.TruLicensePlate,
                 truckType = m.TruType
-            }).ToListAsync();
+            }).AsNoTracking().ToListAsync();
         }
 
         public async Task<List<GetTruckDto>> GetTrucksByUserIDAsync(int userID)
@@ -35,7 +36,7 @@ namespace LoadLoop.api.Services
                 truckMaxweight = t.TruMaxWeight,
                 truckLicensePlate = t.TruLicensePlate,
                 truckType = t.TruType
-            }).ToListAsync();
+            }).AsNoTracking().ToListAsync();
         }
 
         public async Task<GetTruckDto?> GetTruckByIDAsync(int truckID)
@@ -47,7 +48,7 @@ namespace LoadLoop.api.Services
                 truckMaxweight = t.TruMaxWeight,
                 truckLicensePlate = t.TruLicensePlate,
                 truckType = t.TruType
-            }).SingleOrDefaultAsync();
+            }).AsNoTracking().SingleOrDefaultAsync();
         }
 
         //POST
@@ -138,6 +139,24 @@ namespace LoadLoop.api.Services
 
              try
             {
+                await _dbContext.SaveChangesAsync();
+                return OperationalResults.Success;
+            }
+            catch (DbUpdateException)
+            {
+                return OperationalResults.Failure;
+            }
+        }
+        //PATCH
+        public async Task<OperationalResults> PatchTruck(int id, PatchTruckDto truckDto)
+        {
+            try
+            {
+                var truck = await _dbContext.TruckTables.FindAsync(id);
+                if (truck is null) return OperationalResults.NotFound;
+                truck.TruType = truckDto.truckType ?? truck.TruType;
+                truck.TruMaxWeight = truckDto.truckMaxWeight ?? truck.TruMaxWeight;
+
                 await _dbContext.SaveChangesAsync();
                 return OperationalResults.Success;
             }

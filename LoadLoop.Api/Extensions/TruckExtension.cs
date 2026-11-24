@@ -78,6 +78,17 @@ namespace LoadLoop.api.Extensions
                     _ => Results.InternalServerError()
                 };
             });
+            //PATCH
+            group.MapPatch("/{id:int}", async (TruckService truckService, int id, PatchTruckDto truckDto) => {
+                var patchResult = await truckService.PatchTruck(id, truckDto);
+
+                return patchResult switch
+                { 
+                    OperationalResults.NotFound => Results.NotFound(),
+                    OperationalResults.Success => Results.NoContent(),
+                    _ => Results.InternalServerError()
+                };
+            });
         }
     
     }

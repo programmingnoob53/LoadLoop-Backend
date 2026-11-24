@@ -215,5 +215,34 @@ namespace LoadLoop.api.Services
                 return OperationalResults.Failure;
             }
         }
+        //PATCH
+        public async Task<OperationalResults> PatchDriver(int id, PatchDriverDto driverDto)
+        {
+            try
+            {
+                var checkDriver = await _dbContext.DriverTables.FindAsync(id);
+                if(checkDriver is null) return OperationalResults.NotFound;
+                var checkUser = await _dbContext.UserTables.FirstOrDefaultAsync(t => t.UsId == checkDriver.UsId);
+                if(checkUser is null) return OperationalResults.NotFound;
+
+                checkUser.UsName = driverDto.newUserName?? checkUser.UsName;
+                checkUser.UsSurname = driverDto.newUserSurname?? checkUser.UsSurname;
+                checkUser.UsEmail = driverDto.newUserEmail?? checkUser.UsEmail;
+                checkUser.UsPhone = driverDto.newPhoneNumber?? checkUser.UsPhone;
+                if(driverDto.newPassword is not null)
+                {
+                    checkUser.UsPasswordHash = HashAlgo.hashPassword(driverDto.newPassword);
+                }
+                //update the driver table entity
+                checkDriver.DriSalary = driverDto.newSalary?? checkDriver.DriSalary;
+                checkDriver.IsAvailable = driverDto.isAvailable?? checkDriver.IsAvailable;
+                await _dbContext.SaveChangesAsync();
+                return OperationalResults.Success;
+            }
+            catch (DbUpdateException)
+            {
+                return OperationalResults.Failure;
+            }
+        }
     }
 }

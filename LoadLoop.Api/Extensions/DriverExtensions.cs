@@ -75,6 +75,17 @@ namespace LoadLoop.api.Extensions
                     _ => Results.InternalServerError()
                 };
             });
+
+            //PATCH
+            group.MapPatch("/{id:int}", async (DriverService driverService, int id, PatchDriverDto driverDto) => {
+                var patchResult = await driverService.PatchDriver(id, driverDto);
+                return patchResult switch
+                {
+                    OperationalResults.NotFound => Results.NotFound(),
+                    OperationalResults.Success => Results.NoContent(),
+                    _ => Results.InternalServerError()
+                };
+            });
         }
     }
 }
